@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>test on xlccccc&#39;s blog</title>
+    <link>/tags/test/</link>
+    <description>Recent content in test on xlccccc&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>© Athul</copyright>
+    <lastBuildDate>Thu, 14 Dec 2023 20:09:20 +0800</lastBuildDate>
+    <atom:link href="/tags/test/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blog Test</title>
+      <link>/posts/blog-test/</link>
+      <pubDate>Thu, 14 Dec 2023 20:09:20 +0800</pubDate>
+      <guid>/posts/blog-test/</guid>
+      <description>test test&#xA;test&#xA;print(&amp;#34;test&amp;#34;) </description>
+    </item>
+  </channel>
+</rss>
