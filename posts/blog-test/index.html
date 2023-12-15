@@ -2,30 +2,24 @@
 <html><head lang="en">
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>Blog Test - xlccccc&#39;s blog</title><link rel="icon" type="image/png" href=/img/logo.jpg /><meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="test test
-test
-print(&#34;test&#34;) " />
+	<meta name="description" content="first blog and test" />
 	<meta property="og:image" content=""/>
 	<meta property="og:title" content="Blog Test" />
-<meta property="og:description" content="test test
-test
-print(&#34;test&#34;) " />
+<meta property="og:description" content="first blog and test" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://blog.xlccccc.top/posts/blog-test/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-12-14T20:09:20+08:00" />
 <meta property="article:modified_time" content="2023-12-14T20:09:20+08:00" />
 
 <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="Blog Test"/>
-<meta name="twitter:description" content="test test
-test
-print(&#34;test&#34;) "/>
+<meta name="twitter:description" content="first blog and test"/>
 <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
 	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="https://blog.xlccccc.top/css/main.d902908ac6e0fab67957de5db5aea1b6455b19ae2ca98eac4c95a4a0fdc02238.css" />
+	<link rel="stylesheet" type="text/css" media="screen" href="https://blog.xlccccc.top/css/main.4c58ba3f18cfa5d36cd339b82d5e62d8805118eaa92db1ce302a0f8a114a664d.css" />
 		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://blog.xlccccc.top/css/dark.c95c5dcf5f32f8b67bd36f7dab66680e068fce2b303087294114aabf7a7c080b.css"  disabled />
 	
 
@@ -99,6 +93,25 @@ print(&#34;test&#34;) "/>
 			<h1 class="title">Blog Test</h1>
 			<div class="meta">Posted on Dec 14, 2023</div>
 		</div>
+		<div class = "toc-wrapper">
+			
+<div class="post-toc" id="post-toc">
+<aside>
+    <header>
+    <h1>Blog Test</h1>
+    </header>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#test">test</a></li>
+  </ul>
+</nav>
+</aside>
+<a href="#" id="toc-toggle"></a>
+</div>
+
+
+
+			</div>
 		
 
 		<section class="body">
@@ -125,67 +138,67 @@ print(&#34;test&#34;) "/>
 		
 		
 		<script>
-        function getGiscusTheme() {
-          const quartoTheme = localStorage.getItem("theme-storage");
-          const giscusTheme = quartoTheme === "dark" ? "dark" : "light";
-          return giscusTheme;
-        }
-      
-        function setGiscusTheme() {
-          function sendMessage(message) {
-            const iframe = document.querySelector("iframe.giscus-frame");
-            if (!iframe) return;
-            iframe.contentWindow.postMessage(
-              { giscus: message },
-              "https://giscus.app"
-            );
-          }
-      
-          sendMessage({
-            setConfig: {
-              theme: getGiscusTheme(),
-            },
-          });
-        }
-      
-        document.addEventListener("DOMContentLoaded", function () {
-          const giscusAttributes = {
-            src: "https://giscus.app/client.js",
-            "data-repo": "xlccccc\/blog",
-            "data-repo-id": "R_kgDOK5uYSw",
-            "data-category": "",
-            "data-category-id": "DIC_kwDOK5uYS84CbvAb",
-            "data-mapping": "pathname",
-            "data-strict": "0",
-            "data-reactions-enabled": "1",
-            "data-emit-metadata": "0",
-            "data-input-position": "bottom",
-            "data-theme": getGiscusTheme(),
-            "data-lang": "zh-CN",
-            crossorigin: "anonymous",
-            async: "",
-          };
-      
-          
-          const giscusScript = document.createElement("script");
-          Object.entries(giscusAttributes).forEach(([key, value]) =>
-            giscusScript.setAttribute(key, value)
-          );
-      
-          
-          const article = document.querySelector("article");
-          if (article) {
-            article.appendChild(giscusScript);
-          }
-      
-          
-          const toggle = document.querySelector("#dark-mode-toggle");
-          if (toggle) {
-            toggle.addEventListener("click", setGiscusTheme);
-          }
-        });
-      </script>
-      
+  function getGiscusTheme() {
+    const quartoTheme = localStorage.getItem("theme-storage");
+    const giscusTheme = quartoTheme === "dark" ? "dark" : "light";
+    return giscusTheme;
+  }
+
+  function setGiscusTheme() {
+    function sendMessage(message) {
+      const iframe = document.querySelector("iframe.giscus-frame");
+      if (!iframe) return;
+      iframe.contentWindow.postMessage(
+        { giscus: message },
+        "https://giscus.app"
+      );
+    }
+
+    sendMessage({
+      setConfig: {
+        theme: getGiscusTheme(),
+      },
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const giscusAttributes = {
+      src: "https://giscus.app/client.js",
+      "data-repo": "xlccccc\/blog",
+      "data-repo-id": "R_kgDOK5uYSw",
+      "data-category": "",
+      "data-category-id": "DIC_kwDOK5uYS84CbvAb",
+      "data-mapping": "pathname",
+      "data-strict": "0",
+      "data-reactions-enabled": "1",
+      "data-emit-metadata": "0",
+      "data-input-position": "bottom",
+      "data-theme": getGiscusTheme(),
+      "data-lang": "zh-CN",
+      crossorigin: "anonymous",
+      async: "",
+    };
+
+    
+    const giscusScript = document.createElement("script");
+    Object.entries(giscusAttributes).forEach(([key, value]) =>
+      giscusScript.setAttribute(key, value)
+    );
+
+    
+    const article = document.querySelector("article");
+    if (article) {
+      article.appendChild(giscusScript);
+    }
+
+    
+    const toggle = document.querySelector("#dark-mode-toggle");
+    if (toggle) {
+      toggle.addEventListener("click", setGiscusTheme);
+    }
+  });
+</script>
+
 		
 	</article>
 </main>
