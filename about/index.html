@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html><head lang="en">
 	<meta charset="utf-8" />
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>About Me - xlccccc&#39;s blog</title><link rel="icon" type="image/png" href=img/logo.jpg /><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>About Me - xlccccc&#39;s blog</title><link rel="icon" type="image/png" href=/img/logo.jpg /><meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="xdsec &amp; L Web" />
 	<meta property="og:image" content=""/>
 	<meta property="og:title" content="About Me" />
@@ -13,11 +13,10 @@
 
 <meta name="twitter:card" content="summary"/><meta name="twitter:title" content="About Me"/>
 <meta name="twitter:description" content="xdsec &amp; L Web"/>
-<script src="https://blog.xlccccc.topjs/feather.min.js"></script>
-	
-	
-        <link href="https://blog.xlccccc.top/css/fonts.11a1877508139eac0b5b4852ceb110c35641b3533321e66e39149e901ed5756b.css" rel="stylesheet">
-	
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
 
 	
 	<link rel="stylesheet" type="text/css" media="screen" href="https://blog.xlccccc.top/css/main.d902908ac6e0fab67957de5db5aea1b6455b19ae2ca98eac4c95a4a0fdc02238.css" />
@@ -70,7 +69,7 @@
 <body>
         <div class="content"><header>
 	<div class="main">
-		<a href="https://blog.xlccccc.top">xlccccc&#39;s blog</a>
+		<a href="https://blog.xlccccc.top/">xlccccc&#39;s blog</a>
 	</div>
 	<nav>
 		
@@ -83,7 +82,7 @@
 		<a href="/tags">Tags</a>
 		
 		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
-		<script src="https://blog.xlccccc.topjs/themetoggle.js"></script>
+		<script src="https://blog.xlccccc.top/js/themetoggle.js"></script>
 		
 	</nav>
 </header>
@@ -106,23 +105,68 @@
 		</div>
 		
 		
-		
-<script src="https://giscus.app/client.js"
-        data-repo="xlccccc/blog"
-        data-repo-id="R_kgDOK5uYSw"
-        data-category=""
-        data-category-id="DIC_kwDOK5uYS84CbvAb"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="bottom"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        crossorigin="anonymous"
-        async>
-</script>
-
+		<script>
+        function getGiscusTheme() {
+          const quartoTheme = localStorage.getItem("theme-storage");
+          const giscusTheme = quartoTheme === "dark" ? "dark" : "light";
+          return giscusTheme;
+        }
+      
+        function setGiscusTheme() {
+          function sendMessage(message) {
+            const iframe = document.querySelector("iframe.giscus-frame");
+            if (!iframe) return;
+            iframe.contentWindow.postMessage(
+              { giscus: message },
+              "https://giscus.app"
+            );
+          }
+      
+          sendMessage({
+            setConfig: {
+              theme: getGiscusTheme(),
+            },
+          });
+        }
+      
+        document.addEventListener("DOMContentLoaded", function () {
+          const giscusAttributes = {
+            src: "https://giscus.app/client.js",
+            "data-repo": "xlccccc\/blog",
+            "data-repo-id": "R_kgDOK5uYSw",
+            "data-category": "",
+            "data-category-id": "DIC_kwDOK5uYS84CbvAb",
+            "data-mapping": "pathname",
+            "data-strict": "0",
+            "data-reactions-enabled": "1",
+            "data-emit-metadata": "0",
+            "data-input-position": "bottom",
+            "data-theme": getGiscusTheme(),
+            "data-lang": "zh-CN",
+            crossorigin: "anonymous",
+            async: "",
+          };
+      
+          
+          const giscusScript = document.createElement("script");
+          Object.entries(giscusAttributes).forEach(([key, value]) =>
+            giscusScript.setAttribute(key, value)
+          );
+      
+          
+          const article = document.querySelector("article");
+          if (article) {
+            article.appendChild(giscusScript);
+          }
+      
+          
+          const toggle = document.querySelector("#dark-mode-toggle");
+          if (toggle) {
+            toggle.addEventListener("click", setGiscusTheme);
+          }
+        });
+      </script>
+      
 		
 	</article>
 </main>
