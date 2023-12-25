@@ -145,7 +145,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>x=1
 </span></span><span style="display:flex;"><span>0
-</span></span></code></pre></div><p>自己改源码手动调始终都接不到两个包，后来折腾了一下vscode调试，发现Backend确实是按CL解析的，但是Content-Length的长度是后面那个包总长，并没有按传的长度解析，这里不太清除是nginx的问题还是gunicorn的问题，便没有深入研究了</p>
+</span></span></code></pre></div><p>自己改源码手动调始终都接不到两个包，后来折腾了一下vscode调试，发现Backend确实是按CL解析的，但是Content-Length的长度是后面那个包总长，并没有按传的长度解析，这里不太清楚是nginx的问题还是gunicorn的问题，便没有深入研究了</p>
 <h2 id="解析绕过">解析绕过</h2>
 <p>自己对gunicorn也不太了解，这题发了hint后搜了下就知道了</p>
 <p><a href="https://lebr0nli.github.io/blog/security/nginx-gunicorn-CSAW2021/">https://lebr0nli.github.io/blog/security/nginx-gunicorn-CSAW2021/</a></p>
