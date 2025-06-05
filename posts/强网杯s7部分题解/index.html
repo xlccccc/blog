@@ -4,35 +4,30 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge"><title>强网杯s7部分题解 - xlccccc&#39;s blog</title><link rel="icon" type="image/png" href=/img/logo.jpg /><meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="description" content="强网杯S7，主要记录和复现下比赛时看过的web题" />
 	<meta property="og:image" content=""/>
-	<meta property="og:title" content="强网杯s7部分题解" />
-<meta property="og:description" content="强网杯S7，主要记录和复现下比赛时看过的web题" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://blog.xlccccc.top/posts/%E5%BC%BA%E7%BD%91%E6%9D%AFs7%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2023-12-20T12:28:18+08:00" />
-<meta property="article:modified_time" content="2023-12-20T12:28:18+08:00" />
+	<meta property="og:url" content="https://blog.xlccccc.top/posts/%E5%BC%BA%E7%BD%91%E6%9D%AFs7%E9%83%A8%E5%88%86%E9%A2%98%E8%A7%A3/">
+  <meta property="og:site_name" content="xlccccc&#39;s blog">
+  <meta property="og:title" content="强网杯s7部分题解">
+  <meta property="og:description" content="强网杯S7，主要记录和复现下比赛时看过的web题">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2023-12-20T12:28:18+08:00">
+    <meta property="article:modified_time" content="2023-12-20T12:28:18+08:00">
+    <meta property="article:tag" content="Ctf">
+    <meta property="article:tag" content="Web">
 
-<meta name="twitter:card" content="summary"/><meta name="twitter:title" content="强网杯s7部分题解"/>
-<meta name="twitter:description" content="强网杯S7，主要记录和复现下比赛时看过的web题"/>
-<script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel="stylesheet">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="强网杯s7部分题解">
+  <meta name="twitter:description" content="强网杯S7，主要记录和复现下比赛时看过的web题">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@1,500&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Roboto+Mono" rel="stylesheet">
 
 	
-	<link rel="stylesheet" type="text/css" media="screen" href="https://blog.xlccccc.top/css/main.1326882c756cdf54063485c8bf826548a2cebe6a3734cc4766e9e83b07982e3a.css" />
-		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://blog.xlccccc.top/css/dark.acc27faeb64bfb288fd545d29d5ec804495d962a1c2bee862cc5f8270ee6f6f8.css"  disabled />
-	
-
-	
-	
-
-	
-	
-		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
+	<link rel="stylesheet" type="text/css" media="screen" href="https://blog.xlccccc.top/css/main.6270815ff92931c6a050066d55b27e7a1e19a8c63dcd3459d86ec8b24a004846.css" />
+		<link id="darkModeStyle" rel="stylesheet" type="text/css" href="https://blog.xlccccc.top/css/dark.50b57e12d401420df23965fed157368aba37b76df0ecefd0b1ecd4da664f01a0.css"  disabled /><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.css">
 		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/katex.min.js"></script>
 		<script defer src="https://cdn.jsdelivr.net/npm/katex@0.15.2/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
-
-		
 		<script>
 			document.addEventListener("DOMContentLoaded", function() {
 					renderMathInElement(document.body, {
@@ -42,10 +37,7 @@
 							]
 					});
 			});
-			</script>
-	
-
-	
+		</script>
 </head>
 <body>
         <div class="content"><header>
@@ -62,20 +54,25 @@
 		
 		<a href="/tags">Tags</a>
 		
-		| <span id="dark-mode-toggle" onclick="toggleTheme()"></span>
+		| <span id="dark-mode-toggle" onclick="toggleTheme()"><svg class="feather">
+   <use href="https://unpkg.com/feather-icons@4.29.2/dist/feather-sprite.svg#sun" />
+</svg></span>
 		<script src="https://blog.xlccccc.top/js/themetoggle.js"></script>
 		
 	</nav>
 </header>
 
 <main>
-	<article>
-		<div class="title">
-			<h1 class="title">强网杯s7部分题解</h1>
-			<div class="meta">Posted on Dec 20, 2023</div>
-		</div>
-		<div class = "toc-wrapper">
-			
+  <article>
+    <div class="post-container">
+      
+      <div class="post-content">
+        <div class="title">
+          <h1 class="title">强网杯s7部分题解</h1>
+          <div class="meta">Posted on Dec 20, 2023</div>
+        </div>
+        <div class="toc-wrapper">
+          
 <div class="post-toc" id="post-toc">
 <aside>
     <header>
@@ -98,14 +95,10 @@
 </div>
 
 
-
-			</div>
-		
-
-		
-
-		<section class="body">
-			<h1 id="thinkshop">thinkshop</h1>
+        </div>
+        
+        <section class="body">
+          <h1 id="thinkshop">thinkshop</h1>
 <p>主要就是php的代码审计</p>
 <p>因为给的是容器导出的文件，所以一上来就看了下mysql的db，发现有一个<code>admin/123456</code>的用户，结果登陆不上，然后把mysql日志打开看下登陆的时候执行了什么语句</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-sql" data-lang="sql"><span style="display:flex;"><span><span style="color:#66d9ef">set</span> <span style="color:#66d9ef">GLOBAL</span> general_log<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ON&#39;</span>;
@@ -120,7 +113,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Windows</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> $files <span style="color:#f92672">=</span> [];
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> __construct($files)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">__construct</span>($files)
 </span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">files</span> <span style="color:#f92672">=</span> [$files]; <span style="color:#75715e">//$file =&gt; /think/Model的子类new Pivot(); Model是抽象类
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
@@ -133,7 +126,7 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $error <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span>;
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">public</span> $parent;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($output, $modelRelation)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">__construct</span>($output, $modelRelation)
 </span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">parent</span> <span style="color:#f92672">=</span> $output;  <span style="color:#75715e">//$this-&gt;parent=&gt; think\console\Output;
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">append</span> <span style="color:#f92672">=</span> <span style="color:#66d9ef">array</span>(<span style="color:#e6db74">&#34;xxx&#34;</span><span style="color:#f92672">=&gt;</span><span style="color:#e6db74">&#34;getError&#34;</span>);     <span style="color:#75715e">//调用getError 返回this-&gt;error
@@ -145,7 +138,7 @@
 </span></span><span style="display:flex;"><span><span style="color:#66d9ef">namespace</span> <span style="color:#a6e22e">think\model</span>{
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">use</span> <span style="color:#a6e22e">think\Model</span>;
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Pivot</span> <span style="color:#66d9ef">extends</span> <span style="color:#a6e22e">Model</span>{
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($output, $modelRelation)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">__construct</span>($output, $modelRelation)
 </span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">parent</span><span style="color:#f92672">::</span><span style="color:#a6e22e">__construct</span>($output, $modelRelation);
 </span></span><span style="display:flex;"><span>        }
@@ -163,7 +156,7 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $selfRelation;
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $bindAttr <span style="color:#f92672">=</span> [];
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $query;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($query)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">__construct</span>($query)
 </span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">selfRelation</span> <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
 </span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">query</span> <span style="color:#f92672">=</span> $query;    <span style="color:#75715e">//$query指向Query
@@ -176,7 +169,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Query</span> {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $model;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($model)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">__construct</span>($model)
 </span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">model</span> <span style="color:#f92672">=</span> $model; <span style="color:#75715e">//$this-&gt;model=&gt; think\console\Output;
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
@@ -186,7 +179,7 @@
 </span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Output</span>{
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">private</span> $handle;
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $styles;
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($handle)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">__construct</span>($handle)
 </span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">styles</span> <span style="color:#f92672">=</span> [<span style="color:#e6db74">&#39;getAttr&#39;</span>];
 </span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">handle</span> <span style="color:#f92672">=</span>$handle; <span style="color:#75715e">//$handle-&gt;think\session\driver\Memcached
@@ -199,7 +192,7 @@
 </span></span><span style="display:flex;"><span>    {
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $handler;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct($handle)
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">__construct</span>($handle)
 </span></span><span style="display:flex;"><span>        {
 </span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">handler</span> <span style="color:#f92672">=</span> $handle; <span style="color:#75715e">//$handle-&gt;think\cache\driver\File
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        }
@@ -212,7 +205,7 @@
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $options<span style="color:#f92672">=</span><span style="color:#66d9ef">null</span>;
 </span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">protected</span> $tag;
 </span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> __construct(){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">function</span> <span style="color:#a6e22e">__construct</span>(){
 </span></span><span style="display:flex;"><span>            $this<span style="color:#f92672">-&gt;</span><span style="color:#a6e22e">options</span><span style="color:#f92672">=</span>[
 </span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;expire&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#ae81ff">3600</span>, 
 </span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#39;cache_subdir&#39;</span> <span style="color:#f92672">=&gt;</span> <span style="color:#66d9ef">false</span>, 
@@ -482,102 +475,104 @@
 </span></span><span style="display:flex;"><span>    &lt;<span style="color:#f92672">address</span>&gt;&lt;/<span style="color:#f92672">address</span>&gt;
 </span></span><span style="display:flex;"><span>&lt;/<span style="color:#f92672">main</span>&gt;
 </span></span></code></pre></div>
-		</section>
+        </section>
+        <div class="post-tags">
+          
+          
+          <nav class="nav tags">
+            <ul class="tags">
+              
+              <li><a href="/tags/ctf">ctf</a></li>
+              
+              <li><a href="/tags/web">web</a></li>
+              
+            </ul>
+          </nav>
+          
+          
+        </div>
+      </div>
 
-		<div class="post-tags">
-			
-			
-			<nav class="nav tags">
-				<ul class="tags">
-					
-					<li><a href="/tags/ctf">ctf</a></li>
-					
-					<li><a href="/tags/web">web</a></li>
-					
-				</ul>
-			</nav>
-			
-			
-		</div>
-		
-		
-		<script>
-  function getGiscusTheme() {
-    const quartoTheme = localStorage.getItem("theme-storage");
-    const giscusTheme = quartoTheme === "dark" ? "dark" : "light";
-    return giscusTheme;
-  }
+    </div>
 
-  function setGiscusTheme() {
-    function sendMessage(message) {
-      const iframe = document.querySelector("iframe.giscus-frame");
-      if (!iframe) return;
-      iframe.contentWindow.postMessage(
-        { giscus: message },
-        "https://giscus.app"
+    
+     
+     <script>
+    function getGiscusTheme() {
+      const quartoTheme = localStorage.getItem("theme-storage");
+      const giscusTheme = quartoTheme === "dark" ? "dark" : "light";
+      return giscusTheme;
+    }
+  
+    function setGiscusTheme() {
+      function sendMessage(message) {
+        const iframe = document.querySelector("iframe.giscus-frame");
+        if (!iframe) return;
+        iframe.contentWindow.postMessage(
+          { giscus: message },
+          "https://giscus.app"
+        );
+      }
+  
+      sendMessage({
+        setConfig: {
+          theme: getGiscusTheme(),
+        },
+      });
+    }
+  
+    document.addEventListener("DOMContentLoaded", function () {
+      const giscusAttributes = {
+        src: "https://giscus.app/client.js",
+        "data-repo": "xlccccc\/blog",
+        "data-repo-id": "R_kgDOK5uYSw",
+        "data-category": "Announcements",
+        "data-category-id": "DIC_kwDOK5uYS84CbvAb",
+        "data-mapping": "pathname",
+        "data-strict": "0",
+        "data-reactions-enabled": "1",
+        "data-emit-metadata": "0",
+        "data-input-position": "bottom",
+        "data-theme": getGiscusTheme(),
+        "data-lang": "zh-CN",
+        crossorigin: "anonymous",
+        async: "",
+      };
+  
+      
+      const giscusScript = document.createElement("script");
+      Object.entries(giscusAttributes).forEach(([key, value]) =>
+        giscusScript.setAttribute(key, value)
       );
-    }
-
-    sendMessage({
-      setConfig: {
-        theme: getGiscusTheme(),
-      },
+  
+      
+      const article = document.querySelector("article");
+      if (article) {
+        article.appendChild(giscusScript);
+      }
+  
+      
+      const toggle = document.querySelector("#dark-mode-toggle");
+      if (toggle) {
+        toggle.addEventListener("click", setGiscusTheme);
+      }
     });
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const giscusAttributes = {
-      src: "https://giscus.app/client.js",
-      "data-repo": "xlccccc\/blog",
-      "data-repo-id": "R_kgDOK5uYSw",
-      "data-category": "",
-      "data-category-id": "DIC_kwDOK5uYS84CbvAb",
-      "data-mapping": "pathname",
-      "data-strict": "0",
-      "data-reactions-enabled": "1",
-      "data-emit-metadata": "0",
-      "data-input-position": "bottom",
-      "data-theme": getGiscusTheme(),
-      "data-lang": "zh-CN",
-      crossorigin: "anonymous",
-      async: "",
-    };
-
-    
-    const giscusScript = document.createElement("script");
-    Object.entries(giscusAttributes).forEach(([key, value]) =>
-      giscusScript.setAttribute(key, value)
-    );
-
-    
-    const article = document.querySelector("article");
-    if (article) {
-      article.appendChild(giscusScript);
-    }
-
-    
-    const toggle = document.querySelector("#dark-mode-toggle");
-    if (toggle) {
-      toggle.addEventListener("click", setGiscusTheme);
-    }
-  });
-</script>
-
-		
-	</article>
+  </script>
+     
+  </article>
 </main>
 <footer>
-  <div style="display:flex"><a class="soc" href="https://github.com/xlccccc" rel="me" title="GitHub"><i data-feather="github"></i></a>
-    <a class="border"></a></div>
+  <div style="display:flex"><a class="soc" href="https://github.com/xlccccc" rel="me" title="GitHub"><svg class="feather">
+   <use href="/svg/feather-sprite.51cf5647cb1987f769b616558f2620fd9423d72058490231b391bf6aa3744b55.svg#github" />
+</svg></a><a class="border"></a></div>
   <div class="footer-info">
-    2024  © Athul |  <a
+    2025  © Athul |  <a
       href="https://github.com/athul/archie">Archie Theme</a> | Built with <a href="https://gohugo.io">Hugo</a>
   </div>
 </footer>
 
 
-<script>
-  feather.replace()
-</script></div>
+
+</div>
     </body>
 </html>

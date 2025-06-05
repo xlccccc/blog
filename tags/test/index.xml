@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>test on xlccccc&#39;s blog</title>
+    <title>Test on xlccccc&#39;s blog</title>
     <link>https://blog.xlccccc.top/tags/test/</link>
-    <description>Recent content in test on xlccccc&#39;s blog</description>
-    <generator>Hugo -- gohugo.io</generator>
+    <description>Recent content in Test on xlccccc&#39;s blog</description>
+    <generator>Hugo</generator>
     <language>en-us</language>
     <copyright>© Athul</copyright>
     <lastBuildDate>Thu, 14 Dec 2023 20:09:20 +0800</lastBuildDate>
@@ -14,7 +14,7 @@
       <link>https://blog.xlccccc.top/posts/blog-test/</link>
       <pubDate>Thu, 14 Dec 2023 20:09:20 +0800</pubDate>
       <guid>https://blog.xlccccc.top/posts/blog-test/</guid>
-      <description>test test&#xA;test&#xA;print(&amp;#34;test&amp;#34;) </description>
+      <description>&lt;h1 id=&#34;test&#34;&gt;test&lt;/h1&gt;&#xA;&lt;p&gt;&lt;strong&gt;test&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;p&gt;test&lt;/p&gt;&#xA;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-python&#34; data-lang=&#34;python&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;print(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;test&amp;#34;&lt;/span&gt;)&#xA;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
     </item>
   </channel>
 </rss>
